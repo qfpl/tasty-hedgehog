@@ -5,23 +5,22 @@ module Test.Tasty.Hedgehog (
 
 import Control.Monad (when)
 import Data.Typeable
-import Data.List
 
-import Test.Tasty.Providers
+import qualified Test.Tasty.Providers as T
 import Test.Tasty.Options
 
 import Hedgehog
 import Hedgehog.Internal.Property
-import Hedgehog.Internal.Runner
+import Hedgehog.Internal.Runner as H
 import Hedgehog.Internal.Report
 import Hedgehog.Internal.Seed as Seed
 
-data HP = HP TestName Property
+data HP = HP T.TestName Property
   deriving (Typeable)
 
 -- | Create a 'Test' for a Hedgehog property
-testProperty :: TestName -> Property ->TestTree
-testProperty name prop = singleTest name (HP name prop)
+testProperty :: T.TestName -> Property -> T.TestTree
+testProperty name prop = T.singleTest name (HP name prop)
 
 newtype HedgehogReplay = HedgehogReplay (Maybe (Size, Seed))
   deriving (Typeable)
@@ -30,7 +29,7 @@ instance IsOption HedgehogReplay where
   defaultValue = HedgehogReplay Nothing
   parseValue v = HedgehogReplay . Just <$> replay
     -- Reads a replay token in the form "{size} {seed}"
-    where replay = (,) <$> safeRead (intercalate " " size) <*> safeRead (intercalate " " seed)
+    where replay = (,) <$> safeRead (unwords size) <*> safeRead (unwords seed)
           (size, seed) = splitAt 2 $ words v
   optionName = return "hedgehog-replay"
   optionHelp = return "Replay token to use for replaying a previous test run"
@@ -80,45 +79,43 @@ instance IsOption HedgehogShrinkLimit where
   parseValue = fmap HedgehogShrinkLimit . safeRead
   optionName = return "hedgehog-shrinks"
   optionHelp = return "Number of shrinks allowed before Hedgehog will fail a test"
+  
+newtype HedgehogShrinkRetries = HedgehogShrinkRetries Int
+  deriving (Eq, Ord, Show, Num, Enum, Real, Integral, Typeable)
 
+instance IsOption HedgehogShrinkRetries where
+  defaultValue = 10
+  parseValue = fmap HedgehogShrinkRetries . safeRead
+  optionName = return "hedgehog-retries"
+  optionHelp = return "Number of times to re-run a test during shrinking"
+        
 reportToProgress :: Int
                  -> Int
                  -> Int
-                 -> Report
-                 -> Progress
+                 -> Report Progress
+                 -> T.Progress
 reportToProgress testLimit discardLimit shrinkLimit (Report testsDone discardsDone status) =
   let
     ratio x y = 1.0 * fromIntegral x / fromIntegral y
   in
     -- TODO add details for tests run / discarded / shrunk
     case status of
-      Waiting ->
-        Progress "Waiting" (ratio testsDone testLimit)
       Running ->
-        Progress "Running" (ratio testsDone testLimit)
+        T.Progress "Running" (ratio testsDone testLimit)
       Shrinking fr ->
-        Progress "Shrinking" (ratio (failureShrinks fr) shrinkLimit)
-      Failed _ ->
-        Progress "Failed" 1.0
-      GaveUp ->
-        Progress "Gave up" 1.0
-      OK ->
-        Progress "OK" 1.0
+        T.Progress "Shrinking" (ratio (failureShrinks fr) shrinkLimit)
 
 reportOutput :: Bool
              -> Bool
              -> String
-             -> Report
+             -> Report Result
              -> IO String
 reportOutput verbose showReplay name report@(Report tests discards status) = do
   when verbose $ do
-    s <- renderReport (Just (PropertyName name)) report
+    s <- renderResult Nothing (Just (PropertyName name)) report
     putStr s
   -- TODO add details for tests run / discarded / shrunk
   return $ case status of
-    Waiting -> "Waiting"
-    Running -> "Running"
-    Shrinking fr -> "Shrinking"
     Failed fr ->
       let
         size = failureSize fr
@@ -132,7 +129,7 @@ reportOutput verbose showReplay name report@(Report tests discards status) = do
     GaveUp -> "Gave up"
     OK -> "OK"
 
-instance IsTest HP where
+instance T.IsTest HP where
   testOptions =
     return [ Option (Proxy :: Proxy HedgehogReplay)
            , Option (Proxy :: Proxy HedgehogShowReplay)
@@ -140,6 +137,7 @@ instance IsTest HP where
            , Option (Proxy :: Proxy HedgehogTestLimit)
            , Option (Proxy :: Proxy HedgehogDiscardLimit)
            , Option (Proxy :: Proxy HedgehogShrinkLimit)
+           , Option (Proxy :: Proxy HedgehogShrinkRetries)
            ]
 
   run opts (HP name (Property _ test)) yieldProgress = do
@@ -150,7 +148,13 @@ instance IsTest HP where
       HedgehogTestLimit       tests = lookupOption opts
       HedgehogDiscardLimit discards = lookupOption opts
       HedgehogShrinkLimit   shrinks = lookupOption opts
-      config = PropertyConfig (TestLimit tests) (DiscardLimit discards) (ShrinkLimit shrinks)
+      HedgehogShrinkRetries retries = lookupOption opts
+      config =
+        PropertyConfig
+          (TestLimit tests)
+          (DiscardLimit discards)
+          (ShrinkLimit shrinks)
+          (ShrinkRetries retries)
 
     randSeed <- Seed.random
     let
@@ -161,8 +165,8 @@ instance IsTest HP where
 
     let
       resultFn = if reportStatus report == OK
-                 then testPassed
-                 else testFailed
+                 then T.testPassed
+                 else T.testFailed
 
     out <- reportOutput verbose showReplay name report
     return $ resultFn out
