@@ -1,3 +1,5 @@
+-- |
+-- 
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 module Test.Tasty.Hedgehog (
     testProperty
@@ -111,18 +113,18 @@ reportOutput :: Bool
              -> Report Result
              -> IO String
 reportOutput verbose showReplay name report@(Report tests discards status) = do
-  s <- renderResult Nothing (Just (PropertyName name)) report
   -- TODO add details for tests run / discarded / shrunk
-  return $ case status of
-    Failed fr ->
+  s <- renderResult Nothing (Just (PropertyName name)) report
+  pure $ case status of
+    Failed fr -> do
       let
         size = failureSize fr
         seed = failureSeed fr
         replayStr =
           if showReplay
-          then "\nUse \"--hedgehog-replay " ++ show size ++ " " ++ show seed ++ "\" to reproduce."
+          then "\nUse '--hedgehog-replay \"" ++ show size ++ " " ++ show seed ++ "\"' to reproduce."
           else ""
-      in s ++ replayStr
+      s ++ replayStr
     GaveUp -> "Gave up"
     OK -> "OK"
 
