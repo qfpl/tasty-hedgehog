@@ -5,7 +5,6 @@ module Test.Tasty.Hedgehog (
     testProperty
   ) where
 
-import Control.Monad (when)
 import Data.Typeable
 
 import qualified Test.Tasty.Providers as T
@@ -96,7 +95,7 @@ reportToProgress :: Int
                  -> Int
                  -> Report Progress
                  -> T.Progress
-reportToProgress testLimit discardLimit shrinkLimit (Report testsDone discardsDone status) =
+reportToProgress testLimit _ shrinkLimit (Report testsDone _ status) =
   let
     ratio x y = 1.0 * fromIntegral x / fromIntegral y
   in
@@ -112,7 +111,7 @@ reportOutput :: Bool
              -> String
              -> Report Result
              -> IO String
-reportOutput verbose showReplay name report@(Report tests discards status) = do
+reportOutput _ showReplay name report@(Report _ _ status) = do
   -- TODO add details for tests run / discarded / shrunk
   s <- renderResult Nothing (Just (PropertyName name)) report
   pure $ case status of
@@ -139,7 +138,7 @@ instance T.IsTest HP where
            , Option (Proxy :: Proxy HedgehogShrinkRetries)
            ]
 
-  run opts (HP name (Property _ test)) yieldProgress = do
+  run opts (HP name (Property _ pTest)) yieldProgress = do
     let
       HedgehogReplay         replay = lookupOption opts
       HedgehogShowReplay showReplay = lookupOption opts
@@ -160,7 +159,7 @@ instance T.IsTest HP where
       size = maybe 0 fst replay
       seed = maybe randSeed snd replay
 
-    report <- checkReport config size seed test (yieldProgress . reportToProgress tests discards shrinks)
+    report <- checkReport config size seed pTest (yieldProgress . reportToProgress tests discards shrinks)
 
     let
       resultFn = if reportStatus report == OK
