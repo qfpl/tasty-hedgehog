@@ -67,7 +67,7 @@ test-suite tasty-hedgehog-tests
 and we should be good to go.
 
 Running the tests will give you something like this:
-[[https://github.com/qfpl/tasty-hedgehog/blob/master/images/example1.png|alt=example1]]
+![example1](https://github.com/qfpl/tasty-hedgehog/blob/master/images/example1.png)
 
 We're already leaning on parametricity in our test of `reverse`.
 Maybe a _free theorem_ pops out of the type of `reverse` that guarantees that anything with that type signature is involutive automatically.
@@ -103,4 +103,4 @@ main =
     ]
 ```
 and now running the tests will give you something like this:
-[[https://github.com/qfpl/tasty-hedgehog/blob/master/images/example2.png|alt=example2]]
+![example2](https://github.com/qfpl/tasty-hedgehog/blob/master/images/example2.png)
