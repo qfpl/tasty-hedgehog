@@ -67,6 +67,7 @@ test-suite tasty-hedgehog-tests
 and we should be good to go.
 
 Running the tests will give you something like this:
+
 ![example1](https://github.com/qfpl/tasty-hedgehog/blob/master/images/example1.png)
 
 We're already leaning on parametricity in our test of `reverse`.
@@ -103,4 +104,5 @@ main =
     ]
 ```
 and now running the tests will give you something like this:
+
 ![example2](https://github.com/qfpl/tasty-hedgehog/blob/master/images/example2.png)
