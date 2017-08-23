@@ -7,22 +7,30 @@ import Test.Tasty
 import Test.Tasty.ExpectedFailure
 import Test.Tasty.Hedgehog
 
+genAlphaList :: Gen String
+genAlphaList =
+  Gen.list (Range.linear 0 100) Gen.alpha
+
+test_involutive :: (MonadTest m, Eq a, Show a) => (a -> a) -> a -> m ()
+test_involutive f x =
+  f (f x) === x
+
 prop_reverse_involutive :: Property
 prop_reverse_involutive =
   property $ do
-    xs <- forAll $ Gen.list (Range.linear 0 100) Gen.alpha
-    reverse (reverse xs) === xs
+    xs <- forAll genAlphaList
+    test_involutive reverse xs
 
 badReverse :: [a] -> [a]
 badReverse [] = []
-badReverse [a] = []
+badReverse [_] = []
 badReverse as = reverse as
 
 prop_badReverse_involutive :: Property
 prop_badReverse_involutive =
   property $ do
-    xs <- forAll $ Gen.list (Range.linear 0 100) Gen.alpha
-    badReverse (badReverse xs) === xs
+    xs <- forAll genAlphaList
+    test_involutive badReverse xs
 
 main :: IO ()
 main =
@@ -31,8 +39,7 @@ main =
     [ testProperty
         "reverse involutive"
         prop_reverse_involutive
-    , expectFail $
-        testProperty
-          "badReverse involutive fails" 
-           prop_badReverse_involutive
+    , expectFail $ testProperty
+        "badReverse involutive fails"
+         prop_badReverse_involutive
     ]
