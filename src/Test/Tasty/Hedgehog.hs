@@ -1,8 +1,25 @@
--- |
+-- | This package lets you test Hedgehog properties with tasty.
+-- 
+-- Typical usage would look like this:
+--
+-- @ 
+-- testGroup "tasty-hedgehog tests" [ 
+--    testProperty "reverse involutive" prop_reverse_involutive
+--  , testProperty "sort idempotent"    prop_sort_idempotent
+--  ]
+-- @ 
 -- 
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 module Test.Tasty.Hedgehog (
     testProperty
+  -- * Options you can pass in via tasty
+  , HedgehogReplay(..)
+  , HedgehogShowReplay(..)
+  , HedgehogVerbose(..)
+  , HedgehogTestLimit(..)
+  , HedgehogDiscardLimit(..)
+  , HedgehogShrinkLimit(..)
+  , HedgehogShrinkRetries(..)
   ) where
 
 import Data.Typeable
@@ -19,10 +36,11 @@ import Hedgehog.Internal.Seed as Seed
 data HP = HP T.TestName Property
   deriving (Typeable)
 
--- | Create a 'Test' for a Hedgehog property
+-- | Create a 'Test' from a Hedgehog property
 testProperty :: T.TestName -> Property -> T.TestTree
 testProperty name prop = T.singleTest name (HP name prop)
 
+-- | The replay token to use for replaying a previous test run
 newtype HedgehogReplay = HedgehogReplay (Maybe (Size, Seed))
   deriving (Typeable)
 
@@ -35,6 +53,7 @@ instance IsOption HedgehogReplay where
   optionName = return "hedgehog-replay"
   optionHelp = return "Replay token to use for replaying a previous test run"
 
+-- | If a test case fails, show a replay token for replaying tests
 newtype HedgehogShowReplay = HedgehogShowReplay Bool
   deriving (Typeable)
 
@@ -44,6 +63,7 @@ instance IsOption HedgehogShowReplay where
   optionName = return "hedgehog-show-replay"
   optionHelp = return "Show a replay token for replaying tests"
 
+-- | Show the generated Hedgehog test cases
 newtype HedgehogVerbose = HedgehogVerbose Bool
   deriving (Typeable)
 
@@ -54,6 +74,7 @@ instance IsOption HedgehogVerbose where
   optionHelp = return "Show the generated Hedgehog test cases"
   optionCLParser = flagCLParser Nothing (HedgehogVerbose True)
 
+-- | The number of successful test cases required before Hedgehog will pass a test
 newtype HedgehogTestLimit = HedgehogTestLimit Int
   deriving (Eq, Ord, Show, Num, Enum, Real, Integral, Typeable)
 
@@ -63,6 +84,7 @@ instance IsOption HedgehogTestLimit where
   optionName = return "hedgehog-tests"
   optionHelp = return "Number of successful test cases required before Hedgehog will pass a test"
 
+-- | The number of discarded cases allowed before Hedgehog will fail a test
 newtype HedgehogDiscardLimit = HedgehogDiscardLimit Int
   deriving (Eq, Ord, Show, Num, Enum, Real, Integral, Typeable)
 
@@ -72,6 +94,7 @@ instance IsOption HedgehogDiscardLimit where
   optionName = return "hedgehog-discards"
   optionHelp = return "Number of discarded cases allowed before Hedgehog will fail a test"
 
+-- | The number of shrinks allowed before Hedgehog will fail a test
 newtype HedgehogShrinkLimit = HedgehogShrinkLimit Int
   deriving (Eq, Ord, Show, Num, Enum, Real, Integral, Typeable)
 
@@ -81,6 +104,7 @@ instance IsOption HedgehogShrinkLimit where
   optionName = return "hedgehog-shrinks"
   optionHelp = return "Number of shrinks allowed before Hedgehog will fail a test"
   
+-- | The number of times to re-run a test during shrinking
 newtype HedgehogShrinkRetries = HedgehogShrinkRetries Int
   deriving (Eq, Ord, Show, Num, Enum, Real, Integral, Typeable)
 
