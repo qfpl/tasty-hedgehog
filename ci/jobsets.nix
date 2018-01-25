@@ -18,7 +18,7 @@
             "keepnr": 5,
             "inputs": {
                 "tasty-hedgehog": { "type": "git", "value": "https://github.com/qfpl/tasty-hedgehog", "emailresponsible": false },
-                "nixpkgs": { "type": "git", "value": "https://github.com/NixOS/nixpkgs.git release-17.09", "emailresponsible": false }
+                "nixpkgs": { "type": "git", "value": "https://github.com/NixOS/nixpkgs.git nixos-unstable", "emailresponsible": false }
             }
         }
     }
