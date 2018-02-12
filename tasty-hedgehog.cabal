@@ -5,7 +5,7 @@ license-file:        LICENCE
 author:              Dave Laing
 maintainer:          dave.laing.80@gmail.com
 copyright:           Copyright (c) 2017, Commonwealth Scientific and Industrial Research Organisation (CSIRO) ABN 41 687 119 230.
-description:         Integrates the hedgehog testing library with the tasty testing framework.
+description:         Integrates the <https://hackage.haskell.org/package/hedgehog hedgehog testing library> with the <https://hackage.haskell.org/package/tasty tasty testing framework>.
 category:            Testing
 synopsis:            Integrates the hedgehog testing library with the tasty testing framework.
 homepage:            https://github.com/qfpl/tasty-hedghog
