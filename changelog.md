@@ -1,5 +1,11 @@
 # Revision history for tasty-hedgehog
 
+## 0.2.0.0  -- 2018-03-13
+
+* Removes the verbosity option, which was unsupported
+* Fixes a bug in configuration option handling, which 
+  was overwriting use configuration with the defaults.
+
 ## 0.1.0.2  -- 2018-01-22
 
 * Ease bounds to allow for `tasty` 1.0.
