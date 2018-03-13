@@ -8,7 +8,7 @@ copyright:           Copyright (c) 2017, Commonwealth Scientific and Industrial 
 description:         Integrates the <https://hackage.haskell.org/package/hedgehog hedgehog testing library> with the <https://hackage.haskell.org/package/tasty tasty testing framework>.
 category:            Testing
 synopsis:            Integration for tasty and hedgehog.
-homepage:            https://github.com/qfpl/tasty-hedghog
+homepage:            https://github.com/qfpl/tasty-hedgehog
 bug-reports:         https://github.com/qfpl/tasty-hedgehog/issues
 build-type:          Simple
 extra-source-files:  changelog.md
