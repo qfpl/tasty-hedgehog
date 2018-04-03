@@ -1,3 +1,7 @@
+[![Build Status](https://travis-ci.org/qfpl/tasty-hedgehog.svg?branch=master)](https://travis-ci.org/qfpl/tasty-hedgehog)
+[![tasty-discover-nightly](http://stackage.org/package/tasty-hedgehog/badge/nightly)](http://stackage.org/nightly/package/tasty-hedgehog)
+[![tasty-discover-lts](http://stackage.org/package/tasty-hedgehog/badge/lts)](http://stackage.org/lts/package/tasty-hedgehog)
+[![Hackage Status](https://img.shields.io/hackage/v/tasty-hedgehog.svg)](http://hackage.haskell.org/package/tasty-hedgehog)
 
 # `tasty-hedgehog`
 
