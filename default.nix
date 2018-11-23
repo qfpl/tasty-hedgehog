@@ -8,20 +8,11 @@ let
     then pkgs.haskellPackages
     else pkgs.haskell.packages.${compiler};
 
-  haskellOverrides7103 = { 
+  modifiedHaskellPackages = haskellPackages.override {
     overrides = self: super: {
-      semigroups = self.callHackage "semigroups" "0.18.3" {};
-      wl-pprint-annotated = self.callHackage "wl-pprint-annotated" "0.1.0.0" {};
-      transformers = self.callHackage "transformers" "0.5.4.0" {};
+      concurrent-output = pkgs.haskell.lib.doJailbreak super.concurrent-output;
     };
   };
 
-  haskellOverrides = { 
-    overrides = self: super: {
-    };
-  };
-
-  modifiedHaskellPackages = 
-    haskellPackages.override (if compiler == "ghc7103" then haskellOverrides7103 else haskellOverrides);
 in 
   modifiedHaskellPackages.callPackage ./tasty-hedgehog.nix {}
