@@ -24,7 +24,7 @@ prop_reverse_involutive =
 badReverse :: [a] -> [a]
 badReverse [] = []
 badReverse [_] = []
-badReverse as = reverse as
+badReverse (x : xs) = badReverse xs ++ [x]
 
 prop_badReverse_involutive :: Property
 prop_badReverse_involutive =
