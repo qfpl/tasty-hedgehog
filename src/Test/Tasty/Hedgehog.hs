@@ -137,7 +137,7 @@ reportOutput showReplay name report@(Report _ _ status) = do
           else ""
       s ++ replayStr
     GaveUp -> "Gave up"
-    OK -> "OK"
+    OK -> "" -- 'tasty' will print an "OK" for us.
 
 instance T.IsTest HP where
   testOptions =
