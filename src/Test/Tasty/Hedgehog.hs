@@ -106,7 +106,7 @@ instance IsOption HedgehogShrinkRetries where
 reportToProgress :: PropertyConfig
                  -> Report Progress
                  -> T.Progress
-reportToProgress config (Report testsDone _ status) =
+reportToProgress config (Report testsDone _ _ status) =
   let
     TestLimit testLimit = propertyTestLimit config
     ShrinkLimit shrinkLimit = propertyShrinkLimit config
@@ -123,7 +123,7 @@ reportOutput :: Bool
              -> String
              -> Report Result
              -> IO String
-reportOutput showReplay name report@(Report _ _ status) = do
+reportOutput showReplay name report@(Report _ _ _ status) = do
   -- TODO add details for tests run / discarded / shrunk
   s <- renderResult Nothing (Just (PropertyName name)) report
   pure $ case status of
