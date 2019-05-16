@@ -1,5 +1,10 @@
 # Revision history for tasty-hedgehog
 
+## 1.0.0.0  -- 2019-05-17
+
+* Removed support for GHC < 8
+* Upgrade to `hedgehog-1`
+
 ## 0.2.0.0  -- 2018-03-13
 
 * Removes the verbosity option, which was unsupported
