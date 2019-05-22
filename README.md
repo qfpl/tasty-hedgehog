@@ -32,7 +32,7 @@ test_involutive f x =
 ```
 
 Thus armed, we write a property to test that the reverse function is actually involutive:
-```
+```haskell
 prop_reverse_involutive :: Property
 prop_reverse_involutive =
   property $ do
