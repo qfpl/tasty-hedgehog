@@ -72,7 +72,7 @@ and we should be good to go.
 
 Running the tests will give you something like this:
 
-![success example](https://github.com/qfpl/tasty-hedgehog/blob/master/images/success.png)
+![success example](./images/success.png)
 
 We're already leaning on parametricity in our test of `reverse`.
 Maybe a _free theorem_ pops out of the type of `reverse` that guarantees that anything with that type signature is involutive automatically.
@@ -114,4 +114,4 @@ main =
 ```
 and now running the tests will give you something like this:
 
-![success and failure example](https://github.com/qfpl/tasty-hedgehog/blob/master/images/failure.png)
+![success and failure example](./images/failure.png)
