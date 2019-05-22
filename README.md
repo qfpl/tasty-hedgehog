@@ -37,6 +37,11 @@ prop_reverse_involutive :: Property
 prop_reverse_involutive =
   property $ do
     xs <- forAll genAlphaList
+    -- hedgehog-1.0 introduced a classification feature
+    -- it's optional, but we use it here for fun :)
+    classify "empty" $ length xs == 0
+    classify "small" $ length xs < 10
+    classify "large" $ length xs >= 10
     test_involutive reverse xs
 ```
 
@@ -90,11 +95,6 @@ prop_badReverse_involutive :: Property
 prop_badReverse_involutive =
   property $ do
     xs <- forAll genAlphaList
-    -- hedgehog-1.0 introduced a classification feature
-    -- it's optional, but we use it here for fun :)
-    classify "empty" $ length xs == 0
-    classify "small" $ length xs < 10
-    classify "large" $ length xs >= 10
     test_involutive badReverse xs
 ```
 
