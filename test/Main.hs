@@ -1,3 +1,4 @@
+{-# language OverloadedStrings #-}
 module Main where
 
 import Hedgehog
@@ -19,6 +20,9 @@ prop_reverse_involutive :: Property
 prop_reverse_involutive =
   property $ do
     xs <- forAll genAlphaList
+    classify "empty" $ length xs == 0
+    classify "small" $ length xs < 10
+    classify "large" $ length xs >= 10
     test_involutive reverse xs
 
 badReverse :: [a] -> [a]

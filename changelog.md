@@ -1,5 +1,9 @@
 # Revision history for tasty-hedgehog
 
+## 1.0.0.1  -- 2019-05-22
+
+* Fixed test result reporting to made plain hedgehog's messages (fixes #30)
+
 ## 1.0.0.0  -- 2019-05-17
 
 * Removed support for GHC < 8
