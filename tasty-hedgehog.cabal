@@ -1,5 +1,5 @@
 name:                tasty-hedgehog
-version:             0.3.0.0
+version:             1.0.0.1
 license:             BSD3
 license-file:        LICENCE
 author:              Dave Laing
@@ -36,7 +36,7 @@ test-suite tasty-hedgehog-tests
   build-depends:       base >= 4.8 && <4.13
                      , tasty >= 0.11 && < 1.3
                      , tasty-expected-failure >= 0.11 && < 0.12
-                     , hedgehog >= 1.0 && < 2.0
+                     , hedgehog >= 1.0 && < 1.1
                      , tasty-hedgehog
   ghc-options:         -Wall
   default-language:    Haskell2010

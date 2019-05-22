@@ -123,21 +123,23 @@ reportOutput :: Bool
              -> String
              -> Report Result
              -> IO String
-reportOutput showReplay name report@(Report _ _ _ status) = do
-  -- TODO add details for tests run / discarded / shrunk
+reportOutput showReplay name report = do
   s <- renderResult Nothing (Just (PropertyName name)) report
-  pure $ case status of
-    Failed fr -> do
+  pure $ case reportStatus report of
+    Failed fr ->
       let
         size = failureSize fr
         seed = failureSeed fr
         replayStr =
           if showReplay
-          then "\nUse '--hedgehog-replay \"" ++ show size ++ " " ++ show seed ++ "\"' to reproduce."
+          then
+            "\nUse '--hedgehog-replay \"" <>
+            show size <> " " <> show seed <>
+            "\"' to reproduce."
           else ""
-      s ++ replayStr
-    GaveUp -> "Gave up"
-    OK -> "" -- 'tasty' will print an "OK" for us.
+      in
+        s <> replayStr <> "\n"
+    _ -> s
 
 instance T.IsTest HP where
   testOptions =
