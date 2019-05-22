@@ -32,11 +32,16 @@ test_involutive f x =
 ```
 
 Thus armed, we write a property to test that the reverse function is actually involutive:
-```
+```haskell
 prop_reverse_involutive :: Property
 prop_reverse_involutive =
   property $ do
     xs <- forAll genAlphaList
+    -- hedgehog-1.0 introduced a classification feature
+    -- it's optional, but we use it here for fun :)
+    classify "empty" $ length xs == 0
+    classify "small" $ length xs < 10
+    classify "large" $ length xs >= 10
     test_involutive reverse xs
 ```
 
@@ -72,7 +77,7 @@ and we should be good to go.
 
 Running the tests will give you something like this:
 
-![example1](https://github.com/qfpl/tasty-hedgehog/blob/master/images/example1.png)
+![success example](./images/success.png)
 
 We're already leaning on parametricity in our test of `reverse`.
 Maybe a _free theorem_ pops out of the type of `reverse` that guarantees that anything with that type signature is involutive automatically.
@@ -109,4 +114,4 @@ main =
 ```
 and now running the tests will give you something like this:
 
-![example2](https://github.com/qfpl/tasty-hedgehog/blob/master/images/example2.png)
+![success and failure example](./images/failure.png)
