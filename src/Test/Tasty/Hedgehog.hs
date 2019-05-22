@@ -133,12 +133,12 @@ reportOutput showReplay name report = do
         replayStr =
           if showReplay
           then
-            "\nUse '--hedgehog-replay \"" <>
-            show size <> " " <> show seed <>
+            "\nUse '--hedgehog-replay \"" ++
+            show size ++ " " ++ show seed ++
             "\"' to reproduce."
           else ""
       in
-        s <> replayStr <> "\n"
+        s ++ replayStr ++ "\n"
     _ -> s
 
 instance T.IsTest HP where
