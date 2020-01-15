@@ -28,6 +28,7 @@ import qualified Test.Tasty.Providers as T
 import Test.Tasty.Options
 
 import Hedgehog
+import Hedgehog.Internal.Config (UseColor(DisableColor))
 import Hedgehog.Internal.Property
 import Hedgehog.Internal.Runner as H
 import Hedgehog.Internal.Report
@@ -103,6 +104,15 @@ instance IsOption HedgehogShrinkRetries where
   optionName = return "hedgehog-retries"
   optionHelp = return "Number of times to re-run a test during shrinking"
 
+propertyTestLimit :: PropertyConfig -> TestLimit
+propertyTestLimit =
+  let
+    getTestLimit (EarlyTermination _ tests) = tests
+    getTestLimit (NoEarlyTermination _ tests) = tests
+    getTestLimit (NoConfidenceTermination tests) = tests
+  in
+    getTestLimit . propertyTerminationCriteria
+
 reportToProgress :: PropertyConfig
                  -> Report Progress
                  -> T.Progress
@@ -124,7 +134,7 @@ reportOutput :: Bool
              -> Report Result
              -> IO String
 reportOutput showReplay name report = do
-  s <- renderResult Nothing (Just (PropertyName name)) report
+  s <- renderResult DisableColor (Just (PropertyName name)) report
   pure $ case reportStatus report of
     Failed fr ->
       let
@@ -161,10 +171,10 @@ instance T.IsTest HP where
       HedgehogShrinkRetries mRetries = lookupOption opts
       config =
         PropertyConfig
-          (fromMaybe (propertyTestLimit pConfig) mTests)
           (fromMaybe (propertyDiscardLimit pConfig) mDiscards)
           (fromMaybe (propertyShrinkLimit pConfig) mShrinks)
           (fromMaybe (propertyShrinkRetries pConfig) mRetries)
+          (NoConfidenceTermination $ fromMaybe (propertyTestLimit pConfig) mTests)
 
     randSeed <- Seed.random
     let

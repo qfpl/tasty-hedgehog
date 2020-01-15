@@ -1,5 +1,9 @@
 # Revision history for tasty-hedgehog
 
+## 1.0.0.2  -- 2020-01-16
+
+* Upgrade to `hedgehog-1.0.2`
+
 ## 1.0.0.1  -- 2019-05-22
 
 * Fixed test result reporting to made plain hedgehog's messages (fixes #30)
