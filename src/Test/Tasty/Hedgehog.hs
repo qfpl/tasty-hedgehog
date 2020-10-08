@@ -37,7 +37,7 @@ import Hedgehog.Internal.Seed as Seed
 data HP = HP T.TestName Property
   deriving (Typeable)
 
--- | Create a 'Test' from a Hedgehog property
+-- | Create a 'T.TestTree' from a Hedgehog 'Property'.
 testProperty :: T.TestName -> Property -> T.TestTree
 testProperty name prop = T.singleTest name (HP name prop)
 
