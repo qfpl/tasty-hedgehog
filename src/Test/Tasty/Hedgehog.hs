@@ -19,6 +19,7 @@ module Test.Tasty.Hedgehog (
   , HedgehogDiscardLimit(..)
   , HedgehogShrinkLimit(..)
   , HedgehogShrinkRetries(..)
+  , HedgehogUseColor(..)
   ) where
 
 import Data.Maybe (fromMaybe)
@@ -28,7 +29,7 @@ import qualified Test.Tasty.Providers as T
 import Test.Tasty.Options
 
 import Hedgehog
-import Hedgehog.Internal.Config (UseColor(DisableColor))
+import Hedgehog.Internal.Config (UseColor(..))
 import Hedgehog.Internal.Property
 import Hedgehog.Internal.Runner as H
 import Hedgehog.Internal.Report
@@ -104,6 +105,18 @@ instance IsOption HedgehogShrinkRetries where
   optionName = return "hedgehog-retries"
   optionHelp = return "Number of times to re-run a test during shrinking"
 
+-- | Whether to use colored output or not
+newtype HedgehogUseColor = HedgehogUseColor UseColor
+  deriving (Eq, Ord, Show, Typeable)
+
+instance IsOption HedgehogUseColor where 
+  defaultValue = HedgehogUseColor DisableColor
+  parseValue "DisableColor" = Just (HedgehogUseColor DisableColor)
+  parseValue "EnableColor" = Just (HedgehogUseColor EnableColor)
+  parseValue _ = Nothing
+  optionName = return "hedgehog-use-color"
+  optionHelp = return "Whether to use colored output or not"
+
 propertyTestLimit :: PropertyConfig -> TestLimit
 propertyTestLimit =
   let
@@ -131,10 +144,11 @@ reportToProgress config (Report testsDone _ _ status) =
 
 reportOutput :: Bool
              -> String
+             -> UseColor
              -> Report Result
              -> IO String
-reportOutput showReplay name report = do
-  s <- renderResult DisableColor (Just (PropertyName name)) report
+reportOutput showReplay name useColor report = do
+  s <- renderResult useColor (Just (PropertyName name)) report
   pure $ case reportStatus report of
     Failed fr ->
       let
@@ -159,6 +173,7 @@ instance T.IsTest HP where
            , Option (Proxy :: Proxy HedgehogDiscardLimit)
            , Option (Proxy :: Proxy HedgehogShrinkLimit)
            , Option (Proxy :: Proxy HedgehogShrinkRetries)
+           , Option (Proxy :: Proxy HedgehogUseColor)
            ]
 
   run opts (HP name (Property pConfig pTest)) yieldProgress = do
@@ -169,6 +184,7 @@ instance T.IsTest HP where
       HedgehogDiscardLimit mDiscards = lookupOption opts
       HedgehogShrinkLimit   mShrinks = lookupOption opts
       HedgehogShrinkRetries mRetries = lookupOption opts
+      HedgehogUseColor useColor = lookupOption opts
       config =
         PropertyConfig
           (fromMaybe (propertyDiscardLimit pConfig) mDiscards)
@@ -188,5 +204,5 @@ instance T.IsTest HP where
                  then T.testPassed
                  else T.testFailed
 
-    out <- reportOutput showReplay name report
+    out <- reportOutput showReplay name useColor report
     return $ resultFn out
