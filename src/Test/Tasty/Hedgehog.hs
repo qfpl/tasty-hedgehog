@@ -110,7 +110,7 @@ newtype HedgehogUseColor = HedgehogUseColor UseColor
   deriving (Eq, Ord, Show, Typeable)
 
 instance IsOption HedgehogUseColor where 
-  defaultValue = HedgehogUseColor DisableColor
+  defaultValue = HedgehogUseColor EnableColor
   parseValue "DisableColor" = Just (HedgehogUseColor DisableColor)
   parseValue "EnableColor" = Just (HedgehogUseColor EnableColor)
   parseValue _ = Nothing
