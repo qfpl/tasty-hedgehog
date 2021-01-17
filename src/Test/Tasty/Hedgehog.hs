@@ -28,7 +28,7 @@ import qualified Test.Tasty.Providers as T
 import Test.Tasty.Options
 
 import Hedgehog
-import Hedgehog.Internal.Config (UseColor(DisableColor))
+import Hedgehog.Internal.Config (UseColor, detectColor)
 import Hedgehog.Internal.Property
 import Hedgehog.Internal.Runner as H
 import Hedgehog.Internal.Report
@@ -130,11 +130,12 @@ reportToProgress config (Report testsDone _ _ status) =
         T.Progress "Shrinking" (ratio (failureShrinks fr) shrinkLimit)
 
 reportOutput :: Bool
+             -> UseColor
              -> String
              -> Report Result
              -> IO String
-reportOutput showReplay name report = do
-  s <- renderResult DisableColor (Just (PropertyName name)) report
+reportOutput showReplay useColor name report = do
+  s <- renderResult useColor (Just (PropertyName name)) report
   pure $ case reportStatus report of
     Failed fr ->
       let
@@ -162,6 +163,7 @@ instance T.IsTest HP where
            ]
 
   run opts (HP name (Property pConfig pTest)) yieldProgress = do
+    useColor <- detectColor
     let
       HedgehogReplay         replay = lookupOption opts
       HedgehogShowReplay showReplay = lookupOption opts
@@ -188,5 +190,5 @@ instance T.IsTest HP where
                  then T.testPassed
                  else T.testFailed
 
-    out <- reportOutput showReplay name report
+    out <- reportOutput showReplay useColor name report
     return $ resultFn out
