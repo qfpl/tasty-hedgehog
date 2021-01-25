@@ -1,5 +1,10 @@
 # Revision history for tasty-hedgehog
 
+## 1.0.1.0 -- 2021-01-25
+
+* Automatically enable or disable colour, based on the same criteria
+  that hedgehog itself checks.
+
 ## 1.0.0.2  -- 2020-01-16
 
 * Upgrade to `hedgehog-1.0.2`
