@@ -1,5 +1,9 @@
 # Revision history for tasty-hedgehog
 
+## 1.1.0.0 -- 2021-04-03
+
+* Add fromGroup function
+
 ## 1.0.1.0 -- 2021-01-25
 
 * Automatically enable or disable colour, based on the same criteria
