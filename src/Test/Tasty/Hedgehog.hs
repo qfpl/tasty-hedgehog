@@ -12,6 +12,7 @@
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 module Test.Tasty.Hedgehog (
     testProperty
+  , fromGroup
   -- * Options you can pass in via tasty
   , HedgehogReplay(..)
   , HedgehogShowReplay(..)
@@ -24,6 +25,7 @@ module Test.Tasty.Hedgehog (
 import Data.Maybe (fromMaybe)
 import Data.Typeable
 
+import qualified Test.Tasty as T
 import qualified Test.Tasty.Providers as T
 import Test.Tasty.Options
 
@@ -40,6 +42,15 @@ data HP = HP T.TestName Property
 -- | Create a 'T.TestTree' from a Hedgehog 'Property'.
 testProperty :: T.TestName -> Property -> T.TestTree
 testProperty name prop = T.singleTest name (HP name prop)
+
+-- | Create a 'T.TestTree' from a Hedgehog 'Group'.
+fromGroup :: Group -> T.TestTree
+fromGroup group =
+    T.testGroup (unGroupName $ groupName group) $
+      map mkTestTree (groupProperties group)
+  where
+    mkTestTree :: (PropertyName, Property) -> T.TestTree
+    mkTestTree (propName, prop) = testProperty (unPropertyName propName) prop
 
 -- | The replay token to use for replaying a previous test run
 newtype HedgehogReplay = HedgehogReplay (Maybe (Size, Seed))
