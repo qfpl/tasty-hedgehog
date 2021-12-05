@@ -21,7 +21,7 @@ source-repository   head
 
 library
   exposed-modules:     Test.Tasty.Hedgehog
-  build-depends:       base >= 4.8 && <4.16
+  build-depends:       base >= 4.8 && <4.17
                      , tagged >= 0.8 && < 0.9
                      , tasty >= 0.11 && < 1.5
                      , hedgehog >= 1.0.2 && < 1.0.6
@@ -33,7 +33,7 @@ test-suite tasty-hedgehog-tests
   type:                exitcode-stdio-1.0
   main-is:             Main.hs
   hs-source-dirs:      test
-  build-depends:       base >= 4.8 && <4.16
+  build-depends:       base >= 4.8 && <4.17
                      , tasty >= 0.11 && < 1.5
                      , tasty-expected-failure >= 0.11 && < 0.13
                      , hedgehog >= 1.0.2 && < 1.0.6
