@@ -4,8 +4,8 @@
 --
 -- @
 -- testGroup "tasty-hedgehog tests" [
---    testProperty "reverse involutive" prop_reverse_involutive
---  , testProperty "sort idempotent"    prop_sort_idempotent
+--    testPropertyNamed "reverse involutive" "prop_reverse_involutive" prop_reverse_involutive
+--  , testPropertyNamed "sort idempotent"    "prop_sort_idempotent"    prop_sort_idempotent
 --  ]
 -- @
 --
@@ -41,6 +41,7 @@ data HP = HP PropertyName Property
   deriving (Typeable)
 
 -- | Create a 'T.TestTree' from a Hedgehog 'Property'.
+{-# DEPRECATED testProperty "testProperty will cause Hedgehog to provide incorrect instructions for re-checking properties" #-}
 testProperty :: T.TestName -> Property -> T.TestTree
 testProperty name prop = T.singleTest name (HP (PropertyName name) prop)
 

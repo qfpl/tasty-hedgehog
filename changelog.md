@@ -2,7 +2,7 @@
 
 ## 1.2.0.0 -- 2022-03-07
 
-* Add `testPropertyNamed` function.
+* Add `testPropertyNamed` function and deprecate `testProperty`.
 
 ## 1.1.0.0 -- 2021-04-03
 
