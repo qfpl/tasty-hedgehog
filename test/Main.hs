@@ -45,5 +45,13 @@ main =
         prop_reverse_involutive
     , expectFail $ testProperty
         "badReverse involutive fails"
-         prop_badReverse_involutive
+        prop_badReverse_involutive
+    , testPropertyNamed
+        "reverse involutive"
+        "prop_reverse_involutive"
+        prop_reverse_involutive
+    , expectFail $ testPropertyNamed
+        "badReverse involutive fails"
+        "prop_badReverse_involutive"
+        prop_badReverse_involutive
     ]
