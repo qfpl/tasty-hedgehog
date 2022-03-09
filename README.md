@@ -55,6 +55,7 @@ main =
   testGroup "tasty-hedgehog tests"
     [ testProperty
         "reverse involutive"
+        "prop_reverse_involutive"
         prop_reverse_involutive
     ]
 ```
@@ -106,10 +107,12 @@ main =
   testGroup "tasty-hedgehog tests"
     [ testProperty
         "reverse involutive"
+        "prop_reverse_involutive"
         prop_reverse_involutive
     , expectFail $ testProperty
         "badReverse involutive fails"
-         prop_badReverse_involutive
+        "prop_badReverse_involutive"
+        prop_badReverse_involutive
     ]
 ```
 and now running the tests will give you something like this:

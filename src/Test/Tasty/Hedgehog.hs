@@ -4,14 +4,15 @@
 --
 -- @
 -- testGroup "tasty-hedgehog tests" [
---    testProperty "reverse involutive" prop_reverse_involutive
---  , testProperty "sort idempotent"    prop_sort_idempotent
+--    testPropertyNamed "reverse involutive" "prop_reverse_involutive" prop_reverse_involutive
+--  , testPropertyNamed "sort idempotent"    "prop_sort_idempotent"    prop_sort_idempotent
 --  ]
 -- @
 --
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 module Test.Tasty.Hedgehog (
     testProperty
+  , testPropertyNamed
   , fromGroup
   -- * Options you can pass in via tasty
   , HedgehogReplay(..)
@@ -36,12 +37,31 @@ import Hedgehog.Internal.Runner as H
 import Hedgehog.Internal.Report
 import Hedgehog.Internal.Seed as Seed
 
-data HP = HP T.TestName Property
+data HP = HP PropertyName Property
   deriving (Typeable)
 
 -- | Create a 'T.TestTree' from a Hedgehog 'Property'.
+{-# DEPRECATED testProperty "testProperty will cause Hedgehog to provide incorrect instructions for re-checking properties" #-}
 testProperty :: T.TestName -> Property -> T.TestTree
-testProperty name prop = T.singleTest name (HP name prop)
+testProperty name prop = T.singleTest name (HP (PropertyName name) prop)
+
+-- | `testPropertyNamed` @testName propertyName property@ creates a
+-- 'T.TestTree' from @property@ using @testName@ as the displayed
+-- description for the property. The @propertyName@ is used by Hedgehog
+-- when a failure occurs to provide instructions for how to re-run
+-- the property and should normally be set to a string representation
+-- of the @property@ argument.
+--
+-- @
+-- testPropertyNamed
+--  "reverse is involutive"
+--  "prop_reverse_involutive"
+--  prop_reverse_involutive
+-- @
+--
+-- @since 1.2.0.0
+testPropertyNamed :: T.TestName -> PropertyName -> Property -> T.TestTree
+testPropertyNamed name propName prop = T.singleTest name (HP propName prop)
 
 -- | Create a 'T.TestTree' from a Hedgehog 'Group'.
 fromGroup :: Group -> T.TestTree
@@ -142,11 +162,11 @@ reportToProgress config (Report testsDone _ _ status) =
 
 reportOutput :: Bool
              -> UseColor
-             -> String
+             -> PropertyName
              -> Report Result
              -> IO String
 reportOutput showReplay useColor name report = do
-  s <- renderResult useColor (Just (PropertyName name)) report
+  s <- renderResult useColor (Just name) report
   pure $ case reportStatus report of
     Failed fr ->
       let
