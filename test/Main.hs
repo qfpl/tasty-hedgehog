@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -Wno-deprecations #-}
 {-# language OverloadedStrings #-}
 module Main where
 
