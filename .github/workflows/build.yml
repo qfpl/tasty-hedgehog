@@ -1,0 +1,59 @@
+name: build
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - ".github/**"
+      - "src/**"
+      - "test/**"
+      - "*.cabal"
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        ghc-version:
+          - "8.0.2"
+          - "8.2.2"
+          - "8.4.4"
+          - "8.6.5"
+          - "8.8.3"
+          - "8.10.7"
+
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v3
+
+      - name: Install ghc-${{ matrix.ghc-version }}
+        id: setup-haskell
+        uses: haskell/actions/setup@v1
+        with:
+          ghc-version: ${{ matrix.ghc-version }}
+
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            ${{ steps.setup-haskell.outputs.cabal-store }}
+            ./dist-newstyle
+          key: ${{ runner.os }}-${{ matrix.ghc-version }}-${{ hashFiles('tasty-hedgehog.cabal') }}
+          restore-keys: |
+            ${{ runner.os }}-${{ matrix.ghc-version }}-
+            ${{ runner.os }}-
+
+      - name: Update package list
+        run: cabal update
+
+      - name: Build
+        run: cabal build
+
+      - name: Run tests
+        run: cabal test
+
+      - name: Build documentation
+        run: cabal haddock
