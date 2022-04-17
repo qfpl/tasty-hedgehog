@@ -41,7 +41,7 @@ data HP = HP PropertyName Property
   deriving (Typeable)
 
 -- | Create a 'T.TestTree' from a Hedgehog 'Property'.
-{-# DEPRECATED testProperty "testProperty will cause Hedgehog to provide incorrect instructions for re-checking properties" #-}
+{-# DEPRECATED testProperty "testProperty will cause Hedgehog to provide incorrect instructions for re-checking properties, use testPropertyNamed instead." #-}
 testProperty :: T.TestName -> Property -> T.TestTree
 testProperty name prop = T.singleTest name (HP (PropertyName name) prop)
 
