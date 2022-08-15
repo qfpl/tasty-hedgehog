@@ -37,13 +37,12 @@ import Hedgehog.Internal.Runner as H
 import Hedgehog.Internal.Report
 import Hedgehog.Internal.Seed as Seed
 
-data HP = HP PropertyName Property
+data HP = HP (Maybe PropertyName) Property
   deriving (Typeable)
 
 -- | Create a 'T.TestTree' from a Hedgehog 'Property'.
-{-# DEPRECATED testProperty "testProperty will cause Hedgehog to provide incorrect instructions for re-checking properties, use testPropertyNamed instead." #-}
 testProperty :: T.TestName -> Property -> T.TestTree
-testProperty name prop = T.singleTest name (HP (PropertyName name) prop)
+testProperty name prop = T.singleTest name (HP Nothing prop)
 
 -- | `testPropertyNamed` @testName propertyName property@ creates a
 -- 'T.TestTree' from @property@ using @testName@ as the displayed
@@ -61,7 +60,8 @@ testProperty name prop = T.singleTest name (HP (PropertyName name) prop)
 --
 -- @since 1.2.0.0
 testPropertyNamed :: T.TestName -> PropertyName -> Property -> T.TestTree
-testPropertyNamed name propName prop = T.singleTest name (HP propName prop)
+testPropertyNamed name propName prop =
+  T.singleTest name (HP (Just propName) prop)
 
 -- | Create a 'T.TestTree' from a Hedgehog 'Group'.
 fromGroup :: Group -> T.TestTree
@@ -162,11 +162,11 @@ reportToProgress config (Report testsDone _ _ status) =
 
 reportOutput :: Bool
              -> UseColor
-             -> PropertyName
+             -> Maybe PropertyName
              -> Report Result
              -> IO String
 reportOutput showReplay useColor name report = do
-  s <- renderResult useColor (Just name) report
+  s <- renderResult useColor name report
   pure $ case reportStatus report of
     Failed fr ->
       let
