@@ -1,5 +1,9 @@
 # Revision history for tasty-hedgehog
 
+## 1.3.0.0 -- 2022-08-22
+
+* The `testProperty` function has been undeprecated. Its behaviour differs from that in version `1.1.0.0` and below in that it now passes no `PropertyName` to Hedgehog. Therefore, Hedgehog will render the text `<property>` in its instructions for reproducing test failures, as opposed to whatever description is provided for `testProperty`.
+
 ## 1.2.0.0 -- 2022-03-07
 
 * Add `testPropertyNamed` function and deprecate `testProperty`.
