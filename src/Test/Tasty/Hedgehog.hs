@@ -37,12 +37,12 @@ import Hedgehog.Internal.Runner as H
 import Hedgehog.Internal.Report
 import Hedgehog.Internal.Seed as Seed
 
-data HP = HP (Maybe PropertyName) Property
+data HP = HP T.TestName (Maybe PropertyName) Property
   deriving (Typeable)
 
 -- | Create a 'T.TestTree' from a Hedgehog 'Property'.
 testProperty :: T.TestName -> Property -> T.TestTree
-testProperty name prop = T.singleTest name (HP Nothing prop)
+testProperty name prop = T.singleTest name (HP name Nothing prop)
 
 -- | `testPropertyNamed` @testName propertyName property@ creates a
 -- 'T.TestTree' from @property@ using @testName@ as the displayed
@@ -61,7 +61,7 @@ testProperty name prop = T.singleTest name (HP Nothing prop)
 -- @since 1.2.0.0
 testPropertyNamed :: T.TestName -> PropertyName -> Property -> T.TestTree
 testPropertyNamed name propName prop =
-  T.singleTest name (HP (Just propName) prop)
+  T.singleTest name (HP name (Just propName) prop)
 
 -- | Create a 'T.TestTree' from a Hedgehog 'Group'.
 fromGroup :: Group -> T.TestTree
@@ -162,10 +162,11 @@ reportToProgress config (Report testsDone _ _ status) =
 
 reportOutput :: Bool
              -> UseColor
+             -> T.TestName
              -> Maybe PropertyName
              -> Report Result
              -> IO String
-reportOutput showReplay useColor name report = do
+reportOutput showReplay useColor testName name report = do
   s <- renderResult useColor name report
   pure $ case reportStatus report of
     Failed fr ->
@@ -175,9 +176,11 @@ reportOutput showReplay useColor name report = do
         replayStr =
           if showReplay
           then
-            "\nUse '--hedgehog-replay \"" ++
+            "\nUse '--pattern \"$NF ~ /" ++
+            testName ++
+            "/\" --hedgehog-replay \"" ++
             show size ++ " " ++ show seed ++
-            "\"' to reproduce."
+            "\"' to reproduce from the command-line."
           else ""
       in
         s ++ replayStr ++ "\n"
@@ -193,7 +196,7 @@ instance T.IsTest HP where
            , Option (Proxy :: Proxy HedgehogShrinkRetries)
            ]
 
-  run opts (HP name (Property pConfig pTest)) yieldProgress = do
+  run opts (HP testName name (Property pConfig pTest)) yieldProgress = do
     useColor <- detectColor
     let
       HedgehogReplay         replay = lookupOption opts
@@ -221,5 +224,5 @@ instance T.IsTest HP where
                  then T.testPassed
                  else T.testFailed
 
-    out <- reportOutput showReplay useColor name report
+    out <- reportOutput showReplay useColor testName name report
     return $ resultFn out
