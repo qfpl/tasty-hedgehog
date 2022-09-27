@@ -219,11 +219,9 @@ instance T.IsTest HP where
           (maybe Nothing (Just . fst) replay)
 
     randSeed <- Seed.random
-    let
-      size = maybe 0 fst replay
-      seed = maybe randSeed snd replay
+    let seed = maybe randSeed snd replay
 
-    report <- checkReport config size seed pTest (yieldProgress . reportToProgress config)
+    report <- checkReport config 0 seed pTest (yieldProgress . reportToProgress config)
 
     let
       resultFn = if reportStatus report == OK
