@@ -1,5 +1,9 @@
 # Revision history for tasty-hedgehog
 
+## 1.3.1.0 -- 2022-10-03
+
+* The instructions for reproducing test failures are now more clearly distinguished from `hedgehog`'s own instructions and include a pattern in the example to limit which tests are re-run. ([#62](https://github.com/qfpl/tasty-hedgehog/pull/62))
+
 ## 1.3.0.0 -- 2022-08-22
 
 * The `testProperty` function has been undeprecated. Its behaviour differs from that in version `1.1.0.0` and below in that it now passes no `PropertyName` to Hedgehog. Therefore, Hedgehog will render the text `<property>` in its instructions for reproducing test failures, as opposed to whatever description is provided for `testProperty`.
