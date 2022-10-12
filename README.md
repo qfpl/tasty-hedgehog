@@ -66,11 +66,11 @@ test-suite tasty-hedgehog-tests
   type:                exitcode-stdio-1.0
   main-is:             Main.hs
   hs-source-dirs:      test
-  build-depends:       base                   >= 4.8  && < 4.11
-                     , tasty                  >= 0.11 && < 0.12
-                     , tasty-expected-failure >= 0.11 && < 0.12
-                     , hedgehog               >= 0.5  && < 0.6
-                     , tasty-hedgehog         >= 0.1  && < 0.2
+  build-depends:       base                   >= 4.8  && < 4.18
+                     , tasty                  >= 0.11 && < 1.5
+                     , tasty-expected-failure >= 0.11 && < 0.13
+                     , hedgehog               >= 1.2  && < 1.3
+                     , tasty-hedgehog         >= 1.4  && < 1.5
   ghc-options:         -Wall
   default-language:    Haskell2010
 ```
