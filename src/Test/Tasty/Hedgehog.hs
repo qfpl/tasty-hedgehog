@@ -73,15 +73,15 @@ fromGroup group =
     mkTestTree (propName, prop) = testProperty (unPropertyName propName) prop
 
 -- | The replay token to use for replaying a previous test run
-newtype HedgehogReplay = HedgehogReplay (Maybe (Size, Seed))
+newtype HedgehogReplay = HedgehogReplay (Maybe (Skip, Seed))
   deriving (Typeable)
 
 instance IsOption HedgehogReplay where
   defaultValue = HedgehogReplay Nothing
   parseValue v = HedgehogReplay . Just <$> replay
-    -- Reads a replay token in the form "{size} {seed}"
-    where replay = (,) <$> safeRead (unwords size) <*> safeRead (unwords seed)
-          (size, seed) = splitAt 2 $ words v
+    -- Reads a replay token in the form "{skip} {seed}"
+    where replay = (,) <$> skipDecompress (unwords skip) <*> safeRead (unwords seed)
+          (skip, seed) = splitAt 1 $ words v
   optionName = return "hedgehog-replay"
   optionHelp = return "Replay token to use for replaying a previous test run"
 
@@ -147,7 +147,10 @@ propertyTestLimit =
 reportToProgress :: PropertyConfig
                  -> Report Progress
                  -> T.Progress
-reportToProgress config (Report testsDone _ _ status) =
+reportToProgress config Report{
+    reportTests = testsDone,
+    reportStatus = status
+  } =
   let
     TestLimit testLimit = propertyTestLimit config
     ShrinkLimit shrinkLimit = propertyShrinkLimit config
@@ -171,15 +174,17 @@ reportOutput showReplay useColor testName name report = do
   pure $ case reportStatus report of
     Failed fr ->
       let
-        size = failureSize fr
-        seed = failureSeed fr
+        count = reportTests report
+        seed = reportSeed report
         replayStr =
           if showReplay
           then
             "\nUse '--pattern \"$NF ~ /" ++
             testName ++
             "/\" --hedgehog-replay \"" ++
-            show size ++ " " ++ show seed ++
+            skipCompress (SkipToShrink count $ failureShrinkPath fr) ++
+            " " ++
+            show seed ++
             "\"' to reproduce from the command-line."
           else ""
       in
@@ -211,13 +216,12 @@ instance T.IsTest HP where
           (fromMaybe (propertyShrinkLimit pConfig) mShrinks)
           (fromMaybe (propertyShrinkRetries pConfig) mRetries)
           (NoConfidenceTermination $ fromMaybe (propertyTestLimit pConfig) mTests)
+          (maybe Nothing (Just . fst) replay)
 
     randSeed <- Seed.random
-    let
-      size = maybe 0 fst replay
-      seed = maybe randSeed snd replay
+    let seed = maybe randSeed snd replay
 
-    report <- checkReport config size seed pTest (yieldProgress . reportToProgress config)
+    report <- checkReport config 0 seed pTest (yieldProgress . reportToProgress config)
 
     let
       resultFn = if reportStatus report == OK
