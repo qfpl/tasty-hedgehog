@@ -57,5 +57,3 @@ jobs:
       - name: Run tests
         run: cabal test
 
-      - name: Build documentation
-        run: cabal haddock
