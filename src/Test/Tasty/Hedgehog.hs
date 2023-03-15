@@ -179,13 +179,13 @@ reportOutput showReplay useColor testName name report = do
         replayStr =
           if showReplay
           then
-            "\nUse '--pattern \"$NF ~ /" ++
+            "\nUse \"--pattern \'$NF ~ /" ++
             testName ++
-            "/\" --hedgehog-replay \"" ++
+            "/\' --hedgehog-replay \'" ++
             skipCompress (SkipToShrink count $ failureShrinkPath fr) ++
             " " ++
             show seed ++
-            "\"' to reproduce from the command-line."
+            "\'\" to reproduce from the command-line."
           else ""
       in
         s ++ replayStr ++ "\n"
