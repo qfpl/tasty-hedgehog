@@ -176,13 +176,15 @@ reportOutput showReplay useColor testName name report = do
       let
         count = reportTests report
         seed = reportSeed report
+        discards = reportDiscards report
+        shrinkPath = failureShrinkPath fr
         replayStr =
           if showReplay
           then
             "\nUse \"--pattern \'$NF ~ /" ++
             testName ++
             "/\' --hedgehog-replay \'" ++
-            skipCompress (SkipToShrink count $ failureShrinkPath fr) ++
+            skipCompress (SkipToShrink count discards shrinkPath) ++
             " " ++
             show seed ++
             "\'\" to reproduce from the command-line."
