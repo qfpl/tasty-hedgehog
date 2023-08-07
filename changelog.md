@@ -1,5 +1,9 @@
 # Revision history for tasty-hedgehog
 
+## 1.4.0.2 -- 2023-08-07
+
+* Support hedgehog 1.4
+
 ## 1.4.0.1 -- 2023-03-15
 
 * Support base 4.18 (GHC 9.6)
