@@ -23,7 +23,7 @@ library
   exposed-modules:     Test.Tasty.Hedgehog
   build-depends:       base >= 4.8 && <4.19
                      , tagged >= 0.8 && < 0.9
-                     , tasty >= 0.11 && < 1.5
+                     , tasty >= 0.11 && < 1.6
                      , hedgehog >= 1.4 && < 1.5
   hs-source-dirs:      src
   ghc-options:         -Wall
@@ -34,7 +34,7 @@ test-suite tasty-hedgehog-tests
   main-is:             Main.hs
   hs-source-dirs:      test
   build-depends:       base >= 4.8 && <4.19
-                     , tasty >= 0.11 && < 1.5
+                     , tasty >= 0.11 && < 1.6
                      , tasty-expected-failure >= 0.11 && < 0.13
                      , hedgehog >= 1.4 && < 1.5
                      , tasty-hedgehog
