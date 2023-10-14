@@ -16,6 +16,7 @@ jobs:
     runs-on: ubuntu-latest
 
     strategy:
+      fail-fast: false
       matrix:
         ghc-version:
           - "8.0.2"
@@ -25,7 +26,9 @@ jobs:
           - "8.8.3"
           - "8.10.7"
           - "9.0.2"
-          - "9.2.2"
+          - "9.2.8"
+          - "9.4.7"
+          - "9.6.3"
 
     steps:
       - name: Clone repository
@@ -56,4 +59,3 @@ jobs:
 
       - name: Run tests
         run: cabal test
-
