@@ -38,7 +38,7 @@ jobs:
 
       - name: Install ghc-${{ matrix.ghc-version }}
         id: setup-haskell
-        uses: haskell/actions/setup@v2
+        uses: haskell-actions/setup@v2
         with:
           ghc-version: ${{ matrix.ghc-version }}
 
