@@ -21,6 +21,7 @@ tested-with:         GHC == 8.0.2, GHC == 8.2.2, GHC == 8.4.4, GHC == 8.6.5, GHC
                      GHC == 9.8.2
                      GHC == 9.10.1
                      GHC == 9.12.2
+                     GHC == 9.14.1
 
 source-repository   head
   type:             git
@@ -28,7 +29,7 @@ source-repository   head
 
 library
   exposed-modules:     Test.Tasty.Hedgehog
-  build-depends:       base >= 4.8 && <4.22
+  build-depends:       base >= 4.8 && <4.23
                      , tagged >= 0.8 && < 0.9
                      , tasty >= 0.11 && < 1.6
                      , hedgehog >= 1.4 && < 1.8
@@ -40,7 +41,7 @@ test-suite tasty-hedgehog-tests
   type:                exitcode-stdio-1.0
   main-is:             Main.hs
   hs-source-dirs:      test
-  build-depends:       base >= 4.8 && <4.22
+  build-depends:       base >= 4.8 && <4.23
                      , tasty >= 0.11 && < 1.6
                      , tasty-expected-failure >= 0.11 && < 0.13
                      , hedgehog >= 1.4 && < 1.8
