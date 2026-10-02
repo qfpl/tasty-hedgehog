@@ -2,7 +2,7 @@
 
 ## 1.4.1.0 -- TBD
 
-* Support hedgehog 1.6 and 1.7, GHC 9.12
+* Support hedgehog 1.6 and 1.7, GHC 9.12, GHC 9.14
 
 ## 1.4.0.2 -- 2023-08-07
 
